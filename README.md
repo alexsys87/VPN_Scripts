@@ -4,9 +4,9 @@
 
 | Скрипт | Протокол | Порт по умолчанию | Сервис | Рабочая папка (ссылки) | Документация |
 |---|---|---|---|---|---|
-| `deploy-xray.sh` | Xray VLESS + REALITY | **443/tcp** | `xray` | `/root/xray-deploy` | [docs/xray.md](docs/xray.md) |
-| `deploy-hysteria2.sh` | Hysteria2 (QUIC, HTTP/3-маскировка) | **443/udp** | `hysteria-server` | `/root/hysteria2-deploy` | [docs/hysteria2.md](docs/hysteria2.md) |
-| `deploy-trusttunnel.sh` | TrustTunnel (протокол AdGuard VPN, HTTP/2 + HTTP/3) | **8443/tcp+udp** | `trusttunnel` | `/root/trusttunnel-deploy` | [docs/trusttunnel.md](docs/trusttunnel.md) |
+| `deploy-xray.sh` | Xray VLESS + REALITY | **443/tcp** | `xray` | `/root/xray-deploy` | [xray.md](xray.md) |
+| `deploy-hysteria2.sh` | Hysteria2 (QUIC, HTTP/3-маскировка) | **443/udp** | `hysteria-server` | `/root/hysteria2-deploy` | [hysteria2.md](hysteria2.md) |
+| `deploy-trusttunnel.sh` | TrustTunnel (протокол AdGuard VPN, HTTP/2 + HTTP/3) | **8443/tcp+udp** | `trusttunnel` | `/root/trusttunnel-deploy` | [trusttunnel.md](trusttunnel.md) |
 
 Скрипты спроектированы так, чтобы работать на одном сервере **одновременно** (порты по умолчанию не пересекаются: Xray — TCP 443, Hysteria2 — UDP 443, TrustTunnel — 8443).
 
