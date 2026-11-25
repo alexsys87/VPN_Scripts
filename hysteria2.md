@@ -68,6 +68,33 @@ sudo bash deploy-hysteria2.sh --port 8443
 - Скрипт откажется от порта, конфликтующего с Xray или TrustTunnel.
 - Раздайте клиентам новые ссылки из `links.txt`.
 
+## Как обновить Hysteria 2 на сервере
+
+Повторный запуск скрипта с нужной версией скачивает новый бинарник (если установленная версия отличается), а пользователи, пароли, сертификат, порт и port hopping **сохраняются** — ссылки клиентов остаются рабочими. **Не используйте `--force`**: он пересоздаёт пароли.
+
+```bash
+# 0) бэкап бинарника (откат конфига скрипт делает сам, бинарника — нет)
+cp -a /usr/local/bin/hysteria /usr/local/bin/hysteria.bak
+
+# 1) обновление: версия — https://github.com/apernet/hysteria/releases (тег app/vX.Y.Z)
+curl -fsSL https://raw.githubusercontent.com/alexsys87/VPN_Scripts/main/deploy-hysteria2.sh \
+  | sudo env HY_VERSION=2.14.0 bash
+```
+
+Если скрипт уже скачан: `sudo env HY_VERSION=2.14.0 bash deploy-hysteria2.sh`. Если версия в самом скрипте уже актуальна, `HY_VERSION` можно не указывать.
+
+Проверка:
+
+```bash
+/usr/local/bin/hysteria version
+systemctl is-active hysteria-server
+sudo bash deploy-hysteria2.sh --check
+```
+
+Откат бинарника: `install -m 0755 /usr/local/bin/hysteria.bak /usr/local/bin/hysteria && systemctl restart hysteria-server`.
+
+Hysteria 2 — один бинарник и для сервера, и для клиента (самотест использует его же), отдельно клиент обновлять не нужно.
+
 ## Примеры
 
 ```bash

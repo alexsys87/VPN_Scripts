@@ -40,7 +40,7 @@ curl -fsSL https://raw.githubusercontent.com/alexsys87/VPN_Scripts/main/deploy-x
 | `--with-mux` | — | дополнительно создать mux-профиль (без `flow`, только как запасной вариант) |
 | `--dry-run` | — | сгенерировать конфиг и ссылки, систему не менять |
 
-Версию Xray можно зафиксировать переменной окружения: `XRAY_VERSION=26.11.9 bash deploy-xray.sh` (по умолчанию именно эта).
+Версию Xray можно зафиксировать переменной окружения: `XRAY_VERSION=26.11.9 bash deploy-xray.sh` (по умолчанию именно эта). Работает только при **первой установке**; обновление уже работающего сервера — см. «Как обновить Xray на сервере» ниже.
 
 ## Как сменить порт
 
@@ -63,6 +63,45 @@ sudo bash deploy-xray.sh --port 8443
   ```
 - Раздайте клиентам новые ссылки из `/root/xray-deploy/links.txt`.
 - Порт 443 лучше всего маскирует трафик под обычный HTTPS; нестандартный порт может быть заметнее.
+
+## Как обновить Xray на сервере
+
+Повторный запуск `deploy-xray.sh` **не обновляет** уже установленный `/usr/local/bin/xray` (бинарник скачивается только если его нет), а `--force` пересоздаёт ключи и UUID и ломает ссылки. Поэтому обновляйте бинарник вручную — конфиг, ключи и ссылки клиентов остаются прежними. Команды выполняйте от root:
+
+```bash
+V=26.11.9    # нужная версия: https://github.com/XTLS/Xray-core/releases
+apt-get install -y unzip curl
+T="$(mktemp -d)" && cd "$T"
+curl -fsSL -o x.zip "https://github.com/XTLS/Xray-core/releases/download/v${V}/Xray-linux-64.zip"
+unzip -q x.zip -d x
+
+# бэкап текущего бинарника (для отката)
+cp -a /usr/local/bin/xray /usr/local/bin/xray.bak
+
+# замена бинарника и geo-данных
+install -m 0755 x/xray /usr/local/bin/xray
+install -m 0644 x/geoip.dat x/geosite.dat /usr/local/share/xray/
+
+# проверка конфига новой версией и перезапуск
+/usr/local/bin/xray run -test -config /usr/local/etc/xray/config.json \
+  && systemctl restart xray
+xray version
+systemctl is-active xray
+```
+
+Затем проверьте туннель (передайте тот же `--port`/`--sni`, что при установке — они не читаются из конфига):
+
+```bash
+sudo bash deploy-xray.sh --check --port 443
+```
+
+Откат, если что-то пошло не так:
+
+```bash
+install -m 0755 /usr/local/bin/xray.bak /usr/local/bin/xray && systemctl restart xray
+```
+
+Только `Xray-linux-64` (x86_64). На другой архитектуре возьмите подходящий архив со страницы релизов; для новой установки такого бинарника есть `--bin PATH`.
 
 ## Примеры
 

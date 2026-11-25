@@ -63,6 +63,35 @@ sudo bash deploy-trusttunnel.sh --port 9443
 - Ссылки `tt://` содержат порт — раздайте клиентам новые из `links.txt`.
 - Менять только `listen_address` вручную в `vpn.toml` не рекомендуется: файрвол и ссылки останутся со старым портом. Используйте повторный запуск скрипта.
 
+## Как обновить TrustTunnel на сервере
+
+Повторный запуск скрипта с нужными версиями скачивает новый endpoint (если установленная версия отличается), а пользователи, пароли, сертификат, hostname и порт **сохраняются** — ссылки `tt://` остаются рабочими. **Не используйте `--force`**: он пересоздаёт пароли и самоподписанный сертификат.
+
+```bash
+# 0) бэкап бинарника (откат конфига скрипт делает сам, бинарника — нет)
+cp -a /opt/trusttunnel/trusttunnel_endpoint /opt/trusttunnel/trusttunnel_endpoint.bak
+
+# 1) обновление: версии — https://github.com/TrustTunnel/TrustTunnel/releases
+#    и https://github.com/TrustTunnel/TrustTunnelClient/releases (только стабильные, без -rc/-beta)
+curl -fsSL https://raw.githubusercontent.com/alexsys87/VPN_Scripts/main/deploy-trusttunnel.sh \
+  | sudo env TT_VERSION=1.3.1 TT_CLIENT_VERSION=1.3.0 bash
+```
+
+Если скрипт уже скачан: `sudo env TT_VERSION=1.3.1 TT_CLIENT_VERSION=1.3.0 bash deploy-trusttunnel.sh`. Если версии в самом скрипте уже актуальны, переменные можно не указывать.
+
+- **Endpoint** (`TT_VERSION`) — серверный бинарник `/opt/trusttunnel/trusttunnel_endpoint`, он заменяется на сервере.
+- **CLI-клиент** (`TT_CLIENT_VERSION`) на сервере постоянно не хранится: он скачивается во временную папку при каждом запуске только для самотеста (HTTP/2 и HTTP/3) и удаляется. «Обновление» клиента — это новое значение `TT_CLIENT_VERSION` при запуске. Приложения на устройствах пользователей обновляются отдельно.
+
+Проверка:
+
+```bash
+/opt/trusttunnel/trusttunnel_endpoint --version
+systemctl is-active trusttunnel
+sudo bash deploy-trusttunnel.sh --check
+```
+
+Откат бинарника: `install -m 0755 /opt/trusttunnel/trusttunnel_endpoint.bak /opt/trusttunnel/trusttunnel_endpoint && systemctl restart trusttunnel`.
+
 ## Примеры
 
 ```bash
