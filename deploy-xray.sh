@@ -75,7 +75,7 @@ MUX_UUID=""
 EXIST_PRIV=""
 EXIST_SHORTID=""
 EXIST_MUX_UUID=""
-XRAY_VERSION="${XRAY_VERSION:-26.4.25}"
+XRAY_VERSION="${XRAY_VERSION:-26.11.9}"
 
 # ---------- helpers ----------
 log()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }

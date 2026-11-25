@@ -40,7 +40,7 @@ curl -fsSL https://raw.githubusercontent.com/alexsys87/VPN_Scripts/main/deploy-x
 | `--with-mux` | — | дополнительно создать mux-профиль (без `flow`, только как запасной вариант) |
 | `--dry-run` | — | сгенерировать конфиг и ссылки, систему не менять |
 
-Версию Xray можно зафиксировать переменной окружения: `XRAY_VERSION=26.4.25 bash deploy-xray.sh` (по умолчанию именно эта).
+Версию Xray можно зафиксировать переменной окружения: `XRAY_VERSION=26.11.9 bash deploy-xray.sh` (по умолчанию именно эта).
 
 ## Как сменить порт
 
